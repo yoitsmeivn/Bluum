@@ -194,3 +194,8 @@ Bluum is built for people who have historically been locked out of private marke
 The institutions that dominate private markets didn't get there because they were smarter. They got there because they had more information, earlier, and better organised. Bluum gives that same advantage to anyone with an internet connection and a deal to find.
 
 > *Institutional-grade private market intelligence. For the rest of us.*
+
+## How to Run
+Start database: docker run -p 8000:8000 chromadb/chroma
+Start backend: cd bluum && npm install && npm run dev:backend
+Start frontend: npm run dev:frontend
