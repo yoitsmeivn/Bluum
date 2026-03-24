@@ -41,6 +41,8 @@ The user types a company name, sector, or deal thesis. A multi-agent AI system f
 | **Risk & Tailwinds Agent** | Macro risks, regulatory headwinds, growth drivers, sector dynamics |
 | **Buyer Landscape Agent** | Active PE firms and strategic acquirers in the space |
 
+**Orchestrator:** a lightweight orchestrator agent sits above the five, enriching the raw user query with inferred sector, geography, and deal type before dispatching to each subagent in parallel via `Promise.all`. Results are written to Supabase as each agent completes.
+
 Each agent uses live web search to pull current, real-world data. Results render progressively — the tearsheet fills in section by section as each agent completes, so users see value immediately.
 
 Every tearsheet is saved to the user's personal corpus and explained in plain English with inline jargon definitions — so a first-time independent advisor gets the same clarity as a seasoned analyst.
@@ -60,6 +62,26 @@ Intelligence mode is where Bluum becomes truly personal. It is a queryable layer
 | **Research memory** | Every tearsheet the user has generated in Mode 1 |
 | **DEF14A filings corpus** | 3,000+ real M&A transactions — deal rationale, target descriptions, merger consideration, acquirer identity |
 | **User uploads** | CIMs, teasers, management presentations, deal memos |
+
+### The Intelligence Agent
+
+Mode 2 is powered by a single dedicated Intelligence Agent — unlike Mode 1 which runs 5 parallel agents against the web, this agent queries your private corpus and grounds every answer in real transaction data.
+
+```
+User Query
+    │
+    ▼
+Intelligence Agent
+    │
+    ├── retrieves from ChromaDB (DEF14A embeddings + tearsheet memory + uploads)
+    ├── ranks and filters by semantic similarity
+    ├── calls Anthropic API with retrieved context (RAG)
+    └── returns structured answer with sources + real numbers
+```
+
+The agent follows a strict grounding rule — it only answers from retrieved context and cites every number back to its source filing or tearsheet. No hallucination, no generative guesswork.
+
+**Query classification:** the agent first classifies the intent — semantic search, numerical lookup, or synthesis — then routes retrieval accordingly.
 
 ### What users can do
 
