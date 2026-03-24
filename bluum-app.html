@@ -1,0 +1,2027 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Bluum — App</title>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:ital,wght@0,300;0,400;0,500;1,300&family=Playfair+Display:ital,wght@0,600;1,400&family=Lora:ital,wght@0,400;1,400&display=swap" rel="stylesheet">
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --bg: #080C18;
+  --surface: #0D1120;
+  --surface2: #111827;
+  --surface3: #171E2E;
+  --amber: #D4921A;
+  --amber-light: #E8A830;
+  --amber-dim: rgba(212,146,26,0.12);
+  --amber-border: rgba(212,146,26,0.25);
+  --ice: #4AAFCC;
+  --ice-dim: rgba(74,175,204,0.1);
+  --text: #C8C4BA;
+  --text-bright: #EAE6DC;
+  --text-dim: #5A5850;
+  --text-muted: #363430;
+  --border: rgba(255,255,255,0.07);
+  --border-med: rgba(255,255,255,0.11);
+  --green: #2A7A4A;
+  --green-text: #4DBA78;
+  --red-text: #D4584A;
+  --mono: 'IBM Plex Mono', monospace;
+  --serif: 'Playfair Display', serif;
+  --body: 'Lora', serif;
+  --sidebar-w: 220px;
+  --topbar-h: 52px;
+}
+html, body { height: 100%; background: var(--bg); color: var(--text); font-family: var(--body); font-size: 14px; line-height: 1.6; overflow: hidden; }
+
+/* LAYOUT */
+.app { display: flex; height: 100vh; }
+
+/* SIDEBAR */
+.sidebar {
+  width: var(--sidebar-w);
+  min-width: var(--sidebar-w);
+  background: var(--surface);
+  border-right: 1px solid var(--border);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+.sidebar-logo {
+  padding: 16px 20px 14px;
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  gap: 0;
+}
+.logo-mark {
+  font-family: var(--mono);
+  font-size: 18px;
+  font-weight: 300;
+  color: var(--text-bright);
+  letter-spacing: -0.3px;
+  display: flex;
+  align-items: center;
+}
+.logo-bar-el {
+  display: inline-block;
+  width: 2px;
+  height: 18px;
+  background: var(--text-bright);
+  margin-right: 2px;
+  border-radius: 1px;
+}
+
+.sidebar-section {
+  padding: 20px 12px 8px;
+}
+.sidebar-label {
+  font-family: var(--mono);
+  font-size: 9px;
+  font-weight: 500;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--text-dim);
+  padding: 0 8px;
+  margin-bottom: 6px;
+}
+
+/* Search bar in sidebar */
+.sidebar-search {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--surface2);
+  border: 1px solid var(--border-med);
+  border-radius: 6px;
+  padding: 7px 10px;
+  margin: 0 0 16px 0;
+  cursor: pointer;
+  transition: border-color 0.15s;
+}
+.sidebar-search:hover { border-color: var(--amber-border); }
+.sidebar-search input {
+  background: none;
+  border: none;
+  outline: none;
+  font-family: var(--mono);
+  font-size: 11px;
+  color: var(--text);
+  width: 100%;
+}
+.sidebar-search input::placeholder { color: var(--text-dim); }
+.search-icon { color: var(--text-dim); font-size: 11px; flex-shrink: 0; }
+
+.nav-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 10px;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s;
+  font-family: var(--mono);
+  font-size: 11px;
+  font-weight: 400;
+  color: var(--text-dim);
+  letter-spacing: 0.02em;
+  margin-bottom: 1px;
+  border: 1px solid transparent;
+}
+.nav-item:hover { background: var(--surface2); color: var(--text); }
+.nav-item.active {
+  background: var(--amber-dim);
+  color: var(--amber-light);
+  border-color: var(--amber-border);
+}
+.nav-icon { font-size: 12px; width: 14px; text-align: center; flex-shrink: 0; }
+
+.sidebar-bottom {
+  margin-top: auto;
+  padding: 12px;
+  border-top: 1px solid var(--border);
+}
+.user-pill {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 10px;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+.user-pill:hover { background: var(--surface2); }
+.user-avatar {
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  background: var(--amber-dim);
+  border: 1px solid var(--amber-border);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--mono);
+  font-size: 10px;
+  font-weight: 500;
+  color: var(--amber-light);
+  flex-shrink: 0;
+}
+.user-name { font-family: var(--mono); font-size: 11px; color: var(--text); }
+.user-role { font-family: var(--mono); font-size: 9px; color: var(--text-dim); }
+
+/* MAIN AREA */
+.main { flex: 1; display: flex; flex-direction: column; overflow: hidden; min-width: 0; }
+
+/* TOP BAR */
+.topbar {
+  height: var(--topbar-h);
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  padding: 0 28px;
+  gap: 16px;
+  flex-shrink: 0;
+  background: var(--surface);
+}
+.topbar-title {
+  font-family: var(--mono);
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--text-dim);
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  flex: 1;
+}
+.topbar-title span { color: var(--text); }
+.topbar-actions { display: flex; align-items: center; gap: 8px; }
+.btn-ghost {
+  font-family: var(--mono);
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--text-dim);
+  background: none;
+  border: 1px solid var(--border-med);
+  border-radius: 4px;
+  padding: 5px 12px;
+  cursor: pointer;
+  transition: color 0.15s, border-color 0.15s;
+}
+.btn-ghost:hover { color: var(--text); border-color: var(--border-med); }
+.btn-amber {
+  font-family: var(--mono);
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--bg);
+  background: var(--amber);
+  border: none;
+  border-radius: 4px;
+  padding: 5px 14px;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+.btn-amber:hover { background: var(--amber-light); }
+
+/* PAGE CONTENT */
+.page { display: none; flex: 1; overflow: hidden; }
+.page.active { display: flex; }
+
+/* ====================== TEARSHEET PAGE ====================== */
+#page-tearsheet { flex-direction: column; overflow: hidden; }
+
+/* Query bar at top of tearsheet */
+.query-bar {
+  padding: 18px 28px 14px;
+  border-bottom: 1px solid var(--border);
+  flex-shrink: 0;
+  background: var(--surface);
+}
+.query-label {
+  font-family: var(--mono);
+  font-size: 9px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--text-dim);
+  margin-bottom: 6px;
+}
+.query-display {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+.query-text {
+  font-family: var(--serif);
+  font-size: 20px;
+  font-style: italic;
+  color: var(--text-bright);
+  flex: 1;
+}
+.query-meta {
+  font-family: var(--mono);
+  font-size: 10px;
+  color: var(--text-dim);
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  flex-shrink: 0;
+}
+.status-dot {
+  width: 6px; height: 6px;
+  border-radius: 50%;
+  background: var(--green-text);
+  display: inline-block;
+  margin-right: 5px;
+  animation: pulse 2s ease-in-out infinite;
+}
+@keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.4} }
+
+/* Tearsheet split layout */
+.tearsheet-body {
+  display: flex;
+  flex: 1;
+  overflow: hidden;
+}
+
+/* Agent nav sidebar */
+.agent-nav {
+  width: 180px;
+  min-width: 180px;
+  border-right: 1px solid var(--border);
+  padding: 16px 10px;
+  overflow-y: auto;
+  background: var(--surface);
+}
+.agent-nav-label {
+  font-family: var(--mono);
+  font-size: 9px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--text-dim);
+  padding: 0 8px;
+  margin-bottom: 10px;
+}
+.agent-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 7px 8px;
+  border-radius: 4px;
+  cursor: pointer;
+  margin-bottom: 2px;
+  border-left: 2px solid transparent;
+  transition: all 0.15s;
+}
+.agent-item:hover { background: var(--surface2); }
+.agent-item.active {
+  background: var(--amber-dim);
+  border-left-color: var(--amber);
+}
+.agent-item.done .agent-status { color: var(--green-text); }
+.agent-item.active .agent-status { color: var(--amber-light); }
+.agent-status { font-size: 10px; flex-shrink: 0; }
+.agent-name {
+  font-family: var(--mono);
+  font-size: 10px;
+  color: var(--text-dim);
+  line-height: 1.3;
+}
+.agent-item.done .agent-name,
+.agent-item.active .agent-name { color: var(--text); }
+
+/* Main tearsheet content */
+.tearsheet-content {
+  flex: 1;
+  overflow-y: auto;
+  padding: 28px 36px;
+}
+
+.ts-section {
+  margin-bottom: 36px;
+  padding-bottom: 36px;
+  border-bottom: 1px solid var(--border);
+}
+.ts-section:last-child { border-bottom: none; }
+
+.ts-section-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 18px;
+}
+.ts-section-tag {
+  font-family: var(--mono);
+  font-size: 9px;
+  font-weight: 500;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--amber);
+  background: var(--amber-dim);
+  border: 1px solid var(--amber-border);
+  padding: 3px 8px;
+  border-radius: 3px;
+}
+.ts-section-title {
+  font-family: var(--mono);
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--text-bright);
+  letter-spacing: 0.04em;
+}
+
+/* Stat cards row */
+.stat-row {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 10px;
+  margin-bottom: 20px;
+}
+.stat-card {
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: 5px;
+  padding: 12px 14px;
+}
+.stat-label {
+  font-family: var(--mono);
+  font-size: 9px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--text-dim);
+  margin-bottom: 6px;
+}
+.stat-value {
+  font-family: var(--mono);
+  font-size: 18px;
+  font-weight: 500;
+  color: var(--text-bright);
+  line-height: 1;
+  margin-bottom: 3px;
+}
+.stat-sub {
+  font-family: var(--mono);
+  font-size: 9px;
+  color: var(--text-dim);
+}
+.stat-up { color: var(--green-text); }
+.stat-down { color: var(--red-text); }
+
+/* Overview prose */
+.ts-prose {
+  font-family: var(--body);
+  font-size: 13.5px;
+  line-height: 1.75;
+  color: var(--text);
+  max-width: 680px;
+}
+.ts-prose p { margin-bottom: 12px; }
+.ts-prose strong { color: var(--text-bright); font-weight: 500; }
+
+/* Tag pills */
+.tag-row { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 14px; }
+.tag {
+  font-family: var(--mono);
+  font-size: 10px;
+  color: var(--text-dim);
+  background: var(--surface3);
+  border: 1px solid var(--border);
+  border-radius: 3px;
+  padding: 3px 8px;
+}
+
+/* Deal table */
+.deal-table { width: 100%; border-collapse: collapse; }
+.deal-table th {
+  font-family: var(--mono);
+  font-size: 9px;
+  font-weight: 500;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--text-dim);
+  padding: 0 12px 10px 0;
+  text-align: left;
+  border-bottom: 1px solid var(--border);
+}
+.deal-table td {
+  font-family: var(--mono);
+  font-size: 11px;
+  color: var(--text);
+  padding: 10px 12px 10px 0;
+  border-bottom: 1px solid var(--border);
+  vertical-align: middle;
+}
+.deal-table tr:last-child td { border-bottom: none; }
+.deal-table tr:hover td { background: var(--surface2); }
+.deal-badge {
+  font-size: 9px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  padding: 2px 7px;
+  border-radius: 3px;
+}
+.deal-badge.completed { background: rgba(42,122,74,0.2); color: var(--green-text); border: 1px solid rgba(42,122,74,0.3); }
+.deal-badge.rumoured { background: rgba(212,146,26,0.12); color: var(--amber-light); border: 1px solid rgba(212,146,26,0.25); }
+.deal-badge.announced { background: rgba(74,175,204,0.1); color: var(--ice); border: 1px solid rgba(74,175,204,0.25); }
+
+/* Target list */
+.target-list { display: flex; flex-direction: column; gap: 10px; }
+.target-card {
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: 5px;
+  padding: 14px 16px;
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+  transition: border-color 0.15s;
+  cursor: pointer;
+}
+.target-card:hover { border-color: var(--border-med); }
+.target-rank {
+  font-family: var(--mono);
+  font-size: 18px;
+  font-weight: 300;
+  color: var(--text-muted);
+  line-height: 1;
+  min-width: 24px;
+  padding-top: 2px;
+}
+.target-info { flex: 1; }
+.target-name {
+  font-family: var(--mono);
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--text-bright);
+  margin-bottom: 3px;
+}
+.target-desc {
+  font-family: var(--body);
+  font-size: 12px;
+  color: var(--text-dim);
+  margin-bottom: 8px;
+  line-height: 1.4;
+}
+.target-meta { display: flex; gap: 8px; flex-wrap: wrap; }
+.target-tag {
+  font-family: var(--mono);
+  font-size: 9px;
+  color: var(--text-dim);
+  background: var(--surface3);
+  border: 1px solid var(--border);
+  padding: 2px 6px;
+  border-radius: 2px;
+}
+.target-score {
+  font-family: var(--mono);
+  font-size: 11px;
+  color: var(--amber-light);
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  flex-shrink: 0;
+}
+.score-bar {
+  width: 40px;
+  height: 3px;
+  background: var(--surface3);
+  border-radius: 2px;
+  overflow: hidden;
+}
+.score-fill {
+  height: 100%;
+  background: var(--amber);
+  border-radius: 2px;
+}
+
+/* Risk grid */
+.risk-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.risk-card {
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: 5px;
+  padding: 14px 16px;
+}
+.risk-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+.risk-icon { font-size: 12px; }
+.risk-title {
+  font-family: var(--mono);
+  font-size: 10px;
+  font-weight: 500;
+  color: var(--text);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+.risk-level {
+  font-family: var(--mono);
+  font-size: 8px;
+  padding: 2px 6px;
+  border-radius: 2px;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  margin-left: auto;
+}
+.risk-level.high { background: rgba(212,88,74,0.15); color: var(--red-text); }
+.risk-level.med { background: rgba(212,146,26,0.12); color: var(--amber-light); }
+.risk-level.low { background: rgba(42,122,74,0.15); color: var(--green-text); }
+.risk-body {
+  font-family: var(--body);
+  font-size: 12px;
+  color: var(--text-dim);
+  line-height: 1.5;
+}
+
+/* Buyer grid */
+.buyer-grid { display: flex; flex-wrap: wrap; gap: 8px; }
+.buyer-card {
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: 5px;
+  padding: 12px 14px;
+  min-width: 160px;
+  flex: 1;
+  transition: border-color 0.15s;
+  cursor: pointer;
+}
+.buyer-card:hover { border-color: var(--amber-border); }
+.buyer-name {
+  font-family: var(--mono);
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--text-bright);
+  margin-bottom: 3px;
+}
+.buyer-type {
+  font-family: var(--mono);
+  font-size: 9px;
+  color: var(--text-dim);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  margin-bottom: 8px;
+}
+.buyer-deals {
+  font-family: var(--mono);
+  font-size: 10px;
+  color: var(--amber-light);
+}
+
+/* ====================== INTELLIGENCE PAGE ====================== */
+#page-intelligence { flex-direction: column; }
+
+.intel-body {
+  flex: 1;
+  display: flex;
+  overflow: hidden;
+}
+.intel-context {
+  width: 240px;
+  min-width: 240px;
+  border-right: 1px solid var(--border);
+  padding: 18px 14px;
+  overflow-y: auto;
+  background: var(--surface);
+}
+.intel-context-label {
+  font-family: var(--mono);
+  font-size: 9px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--text-dim);
+  margin-bottom: 12px;
+}
+.corpus-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  padding: 8px;
+  border-radius: 4px;
+  margin-bottom: 4px;
+  cursor: pointer;
+  transition: background 0.15s;
+  border: 1px solid transparent;
+}
+.corpus-item:hover { background: var(--surface2); }
+.corpus-item.active { background: var(--amber-dim); border-color: var(--amber-border); }
+.corpus-icon { font-size: 11px; margin-top: 1px; flex-shrink: 0; color: var(--text-dim); }
+.corpus-item.active .corpus-icon { color: var(--amber-light); }
+.corpus-name {
+  font-family: var(--mono);
+  font-size: 10px;
+  color: var(--text-dim);
+  line-height: 1.35;
+}
+.corpus-item.active .corpus-name { color: var(--text); }
+.corpus-count {
+  font-family: var(--mono);
+  font-size: 9px;
+  color: var(--text-muted);
+}
+
+.intel-chat {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+.chat-messages {
+  flex: 1;
+  overflow-y: auto;
+  padding: 24px 32px;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.msg { display: flex; gap: 14px; max-width: 820px; }
+.msg.user { align-self: flex-end; flex-direction: row-reverse; max-width: 600px; }
+
+.msg-avatar {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: var(--surface2);
+  border: 1px solid var(--border-med);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--mono);
+  font-size: 9px;
+  color: var(--text-dim);
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+.msg.user .msg-avatar {
+  background: var(--amber-dim);
+  border-color: var(--amber-border);
+  color: var(--amber-light);
+}
+
+.msg-content { flex: 1; }
+.msg-sender {
+  font-family: var(--mono);
+  font-size: 9px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--text-dim);
+  margin-bottom: 6px;
+}
+.msg-bubble {
+  font-family: var(--body);
+  font-size: 13px;
+  line-height: 1.7;
+  color: var(--text);
+}
+.msg-bubble p { margin-bottom: 10px; }
+.msg-bubble p:last-child { margin-bottom: 0; }
+.msg-bubble strong { color: var(--text-bright); font-weight: 500; }
+.msg.user .msg-bubble {
+  background: var(--surface2);
+  border: 1px solid var(--border-med);
+  border-radius: 6px 6px 2px 6px;
+  padding: 10px 14px;
+}
+
+.source-chips { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 12px; }
+.source-chip {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-family: var(--mono);
+  font-size: 9px;
+  color: var(--ice);
+  background: var(--ice-dim);
+  border: 1px solid rgba(74,175,204,0.2);
+  border-radius: 3px;
+  padding: 3px 8px;
+}
+.source-chip-icon { font-size: 9px; }
+
+.data-table-inline {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 12px 0;
+  font-family: var(--mono);
+  font-size: 11px;
+}
+.data-table-inline th {
+  font-size: 9px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--text-dim);
+  padding: 6px 10px 6px 0;
+  text-align: left;
+  border-bottom: 1px solid var(--border);
+}
+.data-table-inline td {
+  padding: 8px 10px 8px 0;
+  border-bottom: 1px solid var(--border);
+  color: var(--text);
+}
+.data-table-inline tr:last-child td { border-bottom: none; }
+.num-cell { color: var(--amber-light); font-weight: 500; }
+
+.chat-input-bar {
+  padding: 14px 28px;
+  border-top: 1px solid var(--border);
+  background: var(--surface);
+}
+.chat-input-wrap {
+  display: flex;
+  align-items: flex-end;
+  gap: 10px;
+  background: var(--surface2);
+  border: 1px solid var(--border-med);
+  border-radius: 6px;
+  padding: 10px 14px;
+  transition: border-color 0.15s;
+}
+.chat-input-wrap:focus-within { border-color: var(--amber-border); }
+.chat-input {
+  flex: 1;
+  background: none;
+  border: none;
+  outline: none;
+  font-family: var(--body);
+  font-size: 13px;
+  color: var(--text);
+  resize: none;
+  min-height: 20px;
+  max-height: 100px;
+  line-height: 1.5;
+}
+.chat-input::placeholder { color: var(--text-dim); }
+.chat-send {
+  background: var(--amber);
+  border: none;
+  border-radius: 4px;
+  width: 28px; height: 28px;
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer;
+  flex-shrink: 0;
+  font-size: 12px;
+  transition: background 0.15s;
+}
+.chat-send:hover { background: var(--amber-light); }
+.chat-hints {
+  display: flex;
+  gap: 6px;
+  margin-top: 8px;
+  flex-wrap: wrap;
+}
+.chat-hint {
+  font-family: var(--mono);
+  font-size: 9px;
+  color: var(--text-dim);
+  background: var(--surface3);
+  border: 1px solid var(--border);
+  border-radius: 3px;
+  padding: 3px 8px;
+  cursor: pointer;
+  transition: color 0.15s, border-color 0.15s;
+}
+.chat-hint:hover { color: var(--text); border-color: var(--border-med); }
+
+/* ====================== LIBRARY PAGE ====================== */
+#page-library { flex-direction: column; overflow: hidden; }
+.library-body {
+  flex: 1;
+  overflow-y: auto;
+  padding: 24px 28px;
+}
+.library-filters {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 20px;
+}
+.filter-chip {
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: 0.06em;
+  color: var(--text-dim);
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  padding: 5px 12px;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+.filter-chip:hover { color: var(--text); border-color: var(--border-med); }
+.filter-chip.active {
+  color: var(--amber-light);
+  background: var(--amber-dim);
+  border-color: var(--amber-border);
+}
+.filter-sep {
+  width: 1px;
+  height: 18px;
+  background: var(--border);
+  margin: 0 4px;
+}
+.sort-select {
+  margin-left: auto;
+  font-family: var(--mono);
+  font-size: 10px;
+  color: var(--text-dim);
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  padding: 5px 10px;
+  cursor: pointer;
+  outline: none;
+}
+
+.library-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 12px;
+}
+.library-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 16px 18px;
+  cursor: pointer;
+  transition: border-color 0.15s, background 0.15s;
+  position: relative;
+}
+.library-card:hover { border-color: var(--border-med); background: var(--surface2); }
+.library-card-sector {
+  font-family: var(--mono);
+  font-size: 9px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--amber);
+  margin-bottom: 6px;
+}
+.library-card-title {
+  font-family: var(--serif);
+  font-size: 15px;
+  font-style: italic;
+  color: var(--text-bright);
+  line-height: 1.3;
+  margin-bottom: 10px;
+}
+.library-card-meta {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 12px;
+}
+.library-card-date {
+  font-family: var(--mono);
+  font-size: 10px;
+  color: var(--text-dim);
+}
+.library-card-agents {
+  display: flex;
+  gap: 3px;
+}
+.agent-dot {
+  width: 5px; height: 5px;
+  border-radius: 50%;
+  background: var(--green-text);
+}
+.library-card-summary {
+  font-family: var(--body);
+  font-size: 12px;
+  color: var(--text-dim);
+  line-height: 1.55;
+  margin-bottom: 14px;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+.library-card-footer {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.library-tag {
+  font-family: var(--mono);
+  font-size: 9px;
+  color: var(--text-dim);
+  background: var(--surface3);
+  border: 1px solid var(--border);
+  border-radius: 2px;
+  padding: 2px 6px;
+}
+.library-card-action {
+  margin-left: auto;
+  font-family: var(--mono);
+  font-size: 9px;
+  color: var(--text-muted);
+}
+.library-card:hover .library-card-action { color: var(--amber); }
+
+/* ====================== UPLOADS PAGE ====================== */
+#page-uploads { flex-direction: column; overflow: hidden; }
+.uploads-body {
+  flex: 1;
+  overflow-y: auto;
+  padding: 24px 28px;
+  display: flex;
+  gap: 24px;
+}
+.uploads-main { flex: 1; }
+.uploads-sidebar { width: 260px; min-width: 260px; }
+
+.drop-zone {
+  border: 1.5px dashed var(--border-med);
+  border-radius: 8px;
+  padding: 40px;
+  text-align: center;
+  cursor: pointer;
+  transition: border-color 0.2s, background 0.2s;
+  margin-bottom: 24px;
+  background: var(--surface);
+}
+.drop-zone:hover {
+  border-color: var(--amber-border);
+  background: var(--amber-dim);
+}
+.drop-icon { font-size: 28px; margin-bottom: 14px; opacity: 0.5; }
+.drop-title {
+  font-family: var(--mono);
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--text);
+  margin-bottom: 6px;
+}
+.drop-sub {
+  font-family: var(--mono);
+  font-size: 10px;
+  color: var(--text-dim);
+  line-height: 1.5;
+}
+.drop-formats {
+  display: flex;
+  justify-content: center;
+  gap: 6px;
+  margin-top: 14px;
+}
+.format-tag {
+  font-family: var(--mono);
+  font-size: 9px;
+  color: var(--text-dim);
+  background: var(--surface3);
+  border: 1px solid var(--border);
+  border-radius: 2px;
+  padding: 2px 7px;
+}
+
+.uploads-section-title {
+  font-family: var(--mono);
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--text-dim);
+  margin-bottom: 10px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid var(--border);
+}
+
+.file-list { display: flex; flex-direction: column; gap: 6px; }
+.file-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 14px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 5px;
+  cursor: pointer;
+  transition: border-color 0.15s;
+}
+.file-row:hover { border-color: var(--border-med); }
+.file-icon { font-size: 16px; flex-shrink: 0; }
+.file-info { flex: 1; }
+.file-name {
+  font-family: var(--mono);
+  font-size: 11px;
+  color: var(--text);
+  margin-bottom: 2px;
+}
+.file-meta {
+  font-family: var(--mono);
+  font-size: 9px;
+  color: var(--text-dim);
+  display: flex;
+  gap: 10px;
+}
+.file-status {
+  font-family: var(--mono);
+  font-size: 9px;
+  padding: 2px 7px;
+  border-radius: 2px;
+}
+.file-status.indexed {
+  background: rgba(42,122,74,0.15);
+  color: var(--green-text);
+}
+.file-status.processing {
+  background: rgba(212,146,26,0.12);
+  color: var(--amber-light);
+}
+
+.uploads-panel {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 18px;
+  margin-bottom: 12px;
+}
+.uploads-panel-title {
+  font-family: var(--mono);
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--text-dim);
+  margin-bottom: 14px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid var(--border);
+}
+.corpus-stat {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+}
+.corpus-stat-label {
+  font-family: var(--mono);
+  font-size: 10px;
+  color: var(--text-dim);
+}
+.corpus-stat-val {
+  font-family: var(--mono);
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--text-bright);
+}
+.corpus-bar-wrap {
+  background: var(--surface3);
+  border-radius: 2px;
+  height: 4px;
+  margin-bottom: 16px;
+  overflow: hidden;
+}
+.corpus-bar-fill {
+  height: 100%;
+  background: var(--amber);
+  border-radius: 2px;
+}
+
+/* Scrollbar styling */
+::-webkit-scrollbar { width: 4px; height: 4px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--surface3); border-radius: 2px; }
+::-webkit-scrollbar-thumb:hover { background: var(--text-muted); }
+
+/* New research input */
+.new-research-bar {
+  padding: 14px 28px;
+  border-bottom: 1px solid var(--border);
+  background: var(--surface);
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+.research-input {
+  flex: 1;
+  background: var(--surface2);
+  border: 1px solid var(--border-med);
+  border-radius: 5px;
+  padding: 8px 14px;
+  font-family: var(--body);
+  font-size: 13px;
+  color: var(--text);
+  outline: none;
+  transition: border-color 0.15s;
+}
+.research-input::placeholder { color: var(--text-dim); }
+.research-input:focus { border-color: var(--amber-border); }
+</style>
+</head>
+<body>
+
+<div class="app">
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+    <div class="sidebar-logo">
+      <span class="logo-mark">
+        <span class="logo-bar-el"></span>bluum
+      </span>
+    </div>
+
+    <div class="sidebar-section">
+      <div class="sidebar-search">
+        <span class="search-icon">⌕</span>
+        <input type="text" placeholder="Search anything...">
+      </div>
+
+      <div class="sidebar-label">Workspace</div>
+      <div class="nav-item active" onclick="showPage('tearsheet')">
+        <span class="nav-icon">◈</span> Research
+      </div>
+      <div class="nav-item" onclick="showPage('intelligence')">
+        <span class="nav-icon">◎</span> Intelligence
+      </div>
+      <div class="nav-item" onclick="showPage('library')">
+        <span class="nav-icon">▤</span> Saved Tearsheets
+      </div>
+      <div class="nav-item" onclick="showPage('uploads')">
+        <span class="nav-icon">⊕</span> Upload Documents
+      </div>
+    </div>
+
+    <div class="sidebar-section" style="margin-top:8px;">
+      <div class="sidebar-label">Recent</div>
+      <div class="nav-item" style="flex-direction:column;align-items:flex-start;gap:2px;">
+        <span style="font-family:var(--mono);font-size:10px;color:var(--text-dim);">Nordic Fintech SaaS</span>
+        <span style="font-family:var(--mono);font-size:9px;color:var(--text-muted);">2h ago</span>
+      </div>
+      <div class="nav-item" style="flex-direction:column;align-items:flex-start;gap:2px;">
+        <span style="font-family:var(--mono);font-size:10px;color:var(--text-dim);">Healthcare IT UK</span>
+        <span style="font-family:var(--mono);font-size:9px;color:var(--text-muted);">Yesterday</span>
+      </div>
+      <div class="nav-item" style="flex-direction:column;align-items:flex-start;gap:2px;">
+        <span style="font-family:var(--mono);font-size:10px;color:var(--text-dim);">Meridian Capital CIM</span>
+        <span style="font-family:var(--mono);font-size:9px;color:var(--text-muted);">3 days ago</span>
+      </div>
+    </div>
+
+    <div class="sidebar-bottom">
+      <div class="user-pill">
+        <div class="user-avatar">JH</div>
+        <div>
+          <div class="user-name">James Harper</div>
+          <div class="user-role">Harper M&A Advisory</div>
+        </div>
+      </div>
+    </div>
+  </aside>
+
+  <!-- MAIN -->
+  <main class="main">
+
+    <!-- ============ TEARSHEET PAGE ============ -->
+    <div class="page active" id="page-tearsheet">
+      <!-- Top bar -->
+      <div class="topbar">
+        <div class="topbar-title">Research / <span>B2B SaaS — Nordic Payments Infrastructure</span></div>
+        <div class="topbar-actions">
+          <button class="btn-ghost">Export PDF</button>
+          <button class="btn-ghost">Share</button>
+          <button class="btn-amber">Save Tearsheet</button>
+        </div>
+      </div>
+
+      <!-- Query bar -->
+      <div class="query-bar">
+        <div class="query-label">Query</div>
+        <div class="query-display">
+          <div class="query-text">"B2B SaaS payments infrastructure — Nordic acquirers"</div>
+          <div class="query-meta">
+            <span><span class="status-dot"></span>All agents complete</span>
+            <span>5 agents · 28s</span>
+            <span>Mar 24, 2026</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Tearsheet split layout -->
+      <div class="tearsheet-body">
+
+        <!-- Agent nav -->
+        <div class="agent-nav">
+          <div class="agent-nav-label">Agents</div>
+          <div class="agent-item done active" onclick="scrollToSection('overview')">
+            <span class="agent-status">✓</span>
+            <div class="agent-name">Overview</div>
+          </div>
+          <div class="agent-item done" onclick="scrollToSection('ma')">
+            <span class="agent-status">✓</span>
+            <div class="agent-name">M&A Activity</div>
+          </div>
+          <div class="agent-item done" onclick="scrollToSection('targets')">
+            <span class="agent-status">✓</span>
+            <div class="agent-name">Target Scanner</div>
+          </div>
+          <div class="agent-item done" onclick="scrollToSection('risks')">
+            <span class="agent-status">✓</span>
+            <div class="agent-name">Risk & Tailwinds</div>
+          </div>
+          <div class="agent-item done" onclick="scrollToSection('buyers')">
+            <span class="agent-status">✓</span>
+            <div class="agent-name">Buyer Landscape</div>
+          </div>
+        </div>
+
+        <!-- Content -->
+        <div class="tearsheet-content" id="tearsheet-content">
+
+          <!-- OVERVIEW -->
+          <div class="ts-section" id="section-overview">
+            <div class="ts-section-header">
+              <span class="ts-section-tag">Agent 01</span>
+              <span class="ts-section-title">Sector Overview</span>
+            </div>
+
+            <div class="stat-row">
+              <div class="stat-card">
+                <div class="stat-label">Market Size</div>
+                <div class="stat-value">€4.2B</div>
+                <div class="stat-sub">Nordic payments infra TAM</div>
+              </div>
+              <div class="stat-card">
+                <div class="stat-label">CAGR (2024–28)</div>
+                <div class="stat-value stat-up">+18%</div>
+                <div class="stat-sub">Driven by open banking</div>
+              </div>
+              <div class="stat-card">
+                <div class="stat-label">PE-backed Cos.</div>
+                <div class="stat-value">34</div>
+                <div class="stat-sub">Active in region</div>
+              </div>
+              <div class="stat-card">
+                <div class="stat-label">Avg. EV/EBITDA</div>
+                <div class="stat-value">16.2×</div>
+                <div class="stat-sub stat-up">↑ from 13.8× (2023)</div>
+              </div>
+            </div>
+
+            <div class="ts-prose">
+              <p>Nordic B2B payments infrastructure is one of the most active M&A sub-sectors in European fintech. The region's high digital adoption, mature open banking ecosystem (PSD2 penetration exceeding 70%), and fragmented mid-market vendor base have created fertile conditions for consolidation.</p>
+              <p>The sector is characterised by <strong>recurring SaaS revenue models</strong> (80–95% ARR), high switching costs driven by deep ERP integrations, and strong net revenue retention (median 118%). Strategic acquirers — primarily pan-Nordic banks and global payment processors — are competing with growth equity funds for assets.</p>
+              <p>Key verticals include account-to-account (A2A) payment rails, treasury management SaaS, cross-border reconciliation platforms, and embedded finance APIs.</p>
+            </div>
+            <div class="tag-row">
+              <span class="tag">Open Banking</span>
+              <span class="tag">A2A Payments</span>
+              <span class="tag">Treasury SaaS</span>
+              <span class="tag">Embedded Finance</span>
+              <span class="tag">PSD2</span>
+              <span class="tag">Nordic</span>
+              <span class="tag">B2B</span>
+            </div>
+          </div>
+
+          <!-- M&A ACTIVITY -->
+          <div class="ts-section" id="section-ma">
+            <div class="ts-section-header">
+              <span class="ts-section-tag">Agent 02</span>
+              <span class="ts-section-title">M&A Activity</span>
+            </div>
+            <table class="deal-table">
+              <thead>
+                <tr>
+                  <th>Target</th>
+                  <th>Acquirer</th>
+                  <th>Date</th>
+                  <th>Value</th>
+                  <th>Multiple</th>
+                  <th>Status</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>Payflows AB</td>
+                  <td>Nets Group</td>
+                  <td>Jan 2026</td>
+                  <td>€320m</td>
+                  <td>18.4× EV/EBITDA</td>
+                  <td><span class="deal-badge completed">Completed</span></td>
+                </tr>
+                <tr>
+                  <td>ClearLedger ApS</td>
+                  <td>Undisclosed PE</td>
+                  <td>Nov 2025</td>
+                  <td>€95m</td>
+                  <td>14.1×</td>
+                  <td><span class="deal-badge completed">Completed</span></td>
+                </tr>
+                <tr>
+                  <td>Trunkline Oy</td>
+                  <td>Worldline</td>
+                  <td>Mar 2026</td>
+                  <td>€210m</td>
+                  <td>16.8×</td>
+                  <td><span class="deal-badge announced">Announced</span></td>
+                </tr>
+                <tr>
+                  <td>Vanta Treasury</td>
+                  <td>—</td>
+                  <td>Q2 2026</td>
+                  <td>€150–200m est.</td>
+                  <td>~15×</td>
+                  <td><span class="deal-badge rumoured">Rumoured</span></td>
+                </tr>
+                <tr>
+                  <td>Nordix Reconcile</td>
+                  <td>Symphony Commerce</td>
+                  <td>Sep 2025</td>
+                  <td>€58m</td>
+                  <td>12.3×</td>
+                  <td><span class="deal-badge completed">Completed</span></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <!-- TARGETS -->
+          <div class="ts-section" id="section-targets">
+            <div class="ts-section-header">
+              <span class="ts-section-tag">Agent 03</span>
+              <span class="ts-section-title">Acquisition Targets — Ranked</span>
+            </div>
+            <div class="target-list">
+              <div class="target-card">
+                <div class="target-rank">01</div>
+                <div class="target-info">
+                  <div class="target-name">Finloop Technologies (Stockholm)</div>
+                  <div class="target-desc">API-first A2A payment rails for corporate treasury. €8.2m ARR, 140% NRR. Bootstrapped, founder-led.</div>
+                  <div class="target-meta">
+                    <span class="target-tag">A2A</span>
+                    <span class="target-tag">Sweden</span>
+                    <span class="target-tag">€8m ARR</span>
+                    <span class="target-tag">Bootstrap</span>
+                  </div>
+                </div>
+                <div class="target-score">
+                  91
+                  <div class="score-bar"><div class="score-fill" style="width:91%"></div></div>
+                </div>
+              </div>
+              <div class="target-card">
+                <div class="target-rank">02</div>
+                <div class="target-info">
+                  <div class="target-name">Settlr ApS (Copenhagen)</div>
+                  <div class="target-desc">Real-time cross-border settlement SaaS serving Nordic mid-market CFOs. €5.4m ARR. Series A, Northzone-backed.</div>
+                  <div class="target-meta">
+                    <span class="target-tag">Settlement</span>
+                    <span class="target-tag">Denmark</span>
+                    <span class="target-tag">€5m ARR</span>
+                    <span class="target-tag">VC-backed</span>
+                  </div>
+                </div>
+                <div class="target-score">
+                  84
+                  <div class="score-bar"><div class="score-fill" style="width:84%"></div></div>
+                </div>
+              </div>
+              <div class="target-card">
+                <div class="target-rank">03</div>
+                <div class="target-info">
+                  <div class="target-name">Kassa Systems (Helsinki)</div>
+                  <div class="target-desc">Embedded payment orchestration for Nordic e-commerce. €12m ARR, profitable. Potential carve-out from Kassa Group.</div>
+                  <div class="target-meta">
+                    <span class="target-tag">Embedded Finance</span>
+                    <span class="target-tag">Finland</span>
+                    <span class="target-tag">€12m ARR</span>
+                    <span class="target-tag">Carve-out</span>
+                  </div>
+                </div>
+                <div class="target-score">
+                  79
+                  <div class="score-bar"><div class="score-fill" style="width:79%"></div></div>
+                </div>
+              </div>
+              <div class="target-card">
+                <div class="target-rank">04</div>
+                <div class="target-info">
+                  <div class="target-name">Pagrin AS (Oslo)</div>
+                  <div class="target-desc">Invoice financing and B2B BNPL rails for Norwegian SMEs. €3.1m ARR, growing 60% YoY.</div>
+                  <div class="target-meta">
+                    <span class="target-tag">B2B BNPL</span>
+                    <span class="target-tag">Norway</span>
+                    <span class="target-tag">€3m ARR</span>
+                    <span class="target-tag">Early stage</span>
+                  </div>
+                </div>
+                <div class="target-score">
+                  71
+                  <div class="score-bar"><div class="score-fill" style="width:71%"></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- RISKS -->
+          <div class="ts-section" id="section-risks">
+            <div class="ts-section-header">
+              <span class="ts-section-tag">Agent 04</span>
+              <span class="ts-section-title">Risk & Tailwinds</span>
+            </div>
+            <div class="risk-grid">
+              <div class="risk-card">
+                <div class="risk-header">
+                  <span class="risk-icon">↑</span>
+                  <span class="risk-title">PSD3 Regulatory Tailwind</span>
+                  <span class="risk-level low">Low Risk</span>
+                </div>
+                <div class="risk-body">PSD3 draft implementation accelerates open banking API standardisation across the EU, expanding total addressable market for A2A infrastructure providers. Nordic markets are leading adopters.</div>
+              </div>
+              <div class="risk-card">
+                <div class="risk-header">
+                  <span class="risk-icon">⚠</span>
+                  <span class="risk-title">Valuation Multiple Compression</span>
+                  <span class="risk-level med">Medium</span>
+                </div>
+                <div class="risk-body">Rising ECB base rate environment (currently 3.25%) is compressing growth equity multiples. B2B SaaS at &lt;€10m ARR increasingly scrutinised on path-to-profitability rather than topline growth.</div>
+              </div>
+              <div class="risk-card">
+                <div class="risk-header">
+                  <span class="risk-icon">↑</span>
+                  <span class="risk-title">Pan-Nordic Bank Consolidation</span>
+                  <span class="risk-level low">Tailwind</span>
+                </div>
+                <div class="risk-body">Nordea, SEB, and DNB have signalled intent to acquire infrastructure capabilities rather than build. This increases strategic acquirer competition for assets, supporting seller valuations.</div>
+              </div>
+              <div class="risk-card">
+                <div class="risk-header">
+                  <span class="risk-icon">⚠</span>
+                  <span class="risk-title">DORA Compliance Cost Burden</span>
+                  <span class="risk-level high">High Risk</span>
+                </div>
+                <div class="risk-body">EU Digital Operational Resilience Act (DORA) enforced Jan 2025. Smaller vendors (&lt;50 FTE) face disproportionate compliance cost burden, potentially suppressing EBITDA margins in diligence periods.</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- BUYERS -->
+          <div class="ts-section" id="section-buyers">
+            <div class="ts-section-header">
+              <span class="ts-section-tag">Agent 05</span>
+              <span class="ts-section-title">Buyer Landscape</span>
+            </div>
+            <div class="buyer-grid">
+              <div class="buyer-card">
+                <div class="buyer-name">Nets Group</div>
+                <div class="buyer-type">Strategic Acquirer</div>
+                <div class="buyer-deals">4 deals since 2023</div>
+              </div>
+              <div class="buyer-card">
+                <div class="buyer-name">Nordic Capital</div>
+                <div class="buyer-type">Private Equity</div>
+                <div class="buyer-deals">6 fintech adds</div>
+              </div>
+              <div class="buyer-card">
+                <div class="buyer-name">Worldline SA</div>
+                <div class="buyer-type">Strategic Acquirer</div>
+                <div class="buyer-deals">3 Nordic deals</div>
+              </div>
+              <div class="buyer-card">
+                <div class="buyer-name">EQT Partners</div>
+                <div class="buyer-type">Private Equity</div>
+                <div class="buyer-deals">Active in fintech infra</div>
+              </div>
+              <div class="buyer-card">
+                <div class="buyer-name">Tesi (FII)</div>
+                <div class="buyer-type">Growth Equity</div>
+                <div class="buyer-deals">Finnish focus</div>
+              </div>
+              <div class="buyer-card">
+                <div class="buyer-name">Verdane Capital</div>
+                <div class="buyer-type">Growth Equity</div>
+                <div class="buyer-deals">Nordic digital native</div>
+              </div>
+            </div>
+          </div>
+
+        </div><!-- /tearsheet-content -->
+      </div><!-- /tearsheet-body -->
+    </div><!-- /page-tearsheet -->
+
+
+    <!-- ============ INTELLIGENCE PAGE ============ -->
+    <div class="page" id="page-intelligence">
+      <div class="topbar">
+        <div class="topbar-title">Intelligence / <span>Query your corpus</span></div>
+        <div class="topbar-actions">
+          <button class="btn-ghost">Manage Sources</button>
+          <button class="btn-amber">New Query</button>
+        </div>
+      </div>
+
+      <div class="intel-body">
+        <!-- Context panel -->
+        <div class="intel-context">
+          <div class="intel-context-label">Active Corpus</div>
+
+          <div style="font-family:var(--mono);font-size:9px;color:var(--text-dim);margin-bottom:8px;text-transform:uppercase;letter-spacing:0.1em;">DEF14A Filings</div>
+          <div class="corpus-item active">
+            <span class="corpus-icon">◎</span>
+            <div>
+              <div class="corpus-name">SEC EDGAR — DEF14A</div>
+              <div class="corpus-count">3,241 transactions</div>
+            </div>
+          </div>
+
+          <div style="font-family:var(--mono);font-size:9px;color:var(--text-dim);margin:14px 0 8px;text-transform:uppercase;letter-spacing:0.1em;">Research Memory</div>
+          <div class="corpus-item active">
+            <span class="corpus-icon">◈</span>
+            <div>
+              <div class="corpus-name">Nordic Payments SaaS</div>
+              <div class="corpus-count">Mar 24, 2026</div>
+            </div>
+          </div>
+          <div class="corpus-item">
+            <span class="corpus-icon">◈</span>
+            <div>
+              <div class="corpus-name">Healthcare IT UK</div>
+              <div class="corpus-count">Mar 23, 2026</div>
+            </div>
+          </div>
+          <div class="corpus-item">
+            <span class="corpus-icon">◈</span>
+            <div>
+              <div class="corpus-name">Nordic Fintech SaaS</div>
+              <div class="corpus-count">Mar 22, 2026</div>
+            </div>
+          </div>
+
+          <div style="font-family:var(--mono);font-size:9px;color:var(--text-dim);margin:14px 0 8px;text-transform:uppercase;letter-spacing:0.1em;">Uploaded Documents</div>
+          <div class="corpus-item active">
+            <span class="corpus-icon">⊕</span>
+            <div>
+              <div class="corpus-name">Meridian Capital CIM</div>
+              <div class="corpus-count">PDF · Indexed</div>
+            </div>
+          </div>
+          <div class="corpus-item active">
+            <span class="corpus-icon">⊕</span>
+            <div>
+              <div class="corpus-name">Finloop Management Pres.</div>
+              <div class="corpus-count">PDF · Indexed</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Chat -->
+        <div class="intel-chat">
+          <div class="chat-messages">
+
+            <!-- System message -->
+            <div style="font-family:var(--mono);font-size:10px;color:var(--text-dim);text-align:center;padding:8px 0;border-bottom:1px solid var(--border);margin-bottom:4px;">
+              Intelligence Agent — grounded in 3,241 DEF14A filings + 2 tearsheets + 2 uploaded documents
+            </div>
+
+            <!-- User message -->
+            <div class="msg user">
+              <div class="msg-avatar">JH</div>
+              <div class="msg-content">
+                <div class="msg-sender" style="text-align:right;">James Harper</div>
+                <div class="msg-bubble">What EBITDA multiples have been paid for B2B SaaS businesses with under $100m revenue in the payments infrastructure space since 2021?</div>
+              </div>
+            </div>
+
+            <!-- Agent response -->
+            <div class="msg">
+              <div class="msg-avatar">B</div>
+              <div class="msg-content">
+                <div class="msg-sender">Intelligence Agent</div>
+                <div class="msg-bubble">
+                  <p>Based on <strong>47 qualifying transactions</strong> from the DEF14A corpus (B2B payments infrastructure, sub-$100m revenue, 2021–2026), the median EV/EBITDA multiple paid was <strong>15.8×</strong>, with a range of 9.2× to 28.4×.</p>
+
+                  <table class="data-table-inline">
+                    <thead>
+                      <tr>
+                        <th>Period</th>
+                        <th>Median Multiple</th>
+                        <th>25th–75th Pctl</th>
+                        <th>Deals (n)</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr><td>2021</td><td class="num-cell">17.4×</td><td>13.2–22.1×</td><td>11</td></tr>
+                      <tr><td>2022</td><td class="num-cell">14.9×</td><td>11.8–19.6×</td><td>14</td></tr>
+                      <tr><td>2023</td><td class="num-cell">13.1×</td><td>9.8–16.4×</td><td>9</td></tr>
+                      <tr><td>2024</td><td class="num-cell">15.2×</td><td>12.0–18.8×</td><td>8</td></tr>
+                      <tr><td>2025–26</td><td class="num-cell">16.8×</td><td>14.1–21.3×</td><td>5</td></tr>
+                    </tbody>
+                  </table>
+
+                  <p>The 2022–23 compression aligns with rate hike cycles; the recovery in 2024–26 tracks renewed PE activity and strategic acquirer demand. NRR above 110% commanded a consistent <strong>+2.4× premium</strong> over sector median across all periods. PE buyers paid a 1.8× discount to strategic acquirers on average.</p>
+                </div>
+                <div class="source-chips">
+                  <span class="source-chip"><span class="source-chip-icon">⊞</span>DEF14A: 47 filings cited</span>
+                  <span class="source-chip"><span class="source-chip-icon">◈</span>Nordic Payments SaaS tearsheet</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- User message 2 -->
+            <div class="msg user">
+              <div class="msg-avatar">JH</div>
+              <div class="msg-content">
+                <div class="msg-sender" style="text-align:right;">James Harper</div>
+                <div class="msg-bubble">How does Finloop compare to the Meridian CIM I uploaded?</div>
+              </div>
+            </div>
+
+            <!-- Agent response 2 -->
+            <div class="msg">
+              <div class="msg-avatar">B</div>
+              <div class="msg-content">
+                <div class="msg-sender">Intelligence Agent</div>
+                <div class="msg-bubble">
+                  <p>Comparing <strong>Finloop Technologies</strong> (from your Nordic Payments tearsheet) against <strong>Meridian Capital's platform asset</strong> (from the uploaded CIM) across the dimensions most relevant to acquirer pricing:</p>
+                  <table class="data-table-inline">
+                    <thead>
+                      <tr><th>Dimension</th><th>Finloop</th><th>Meridian CIM</th></tr>
+                    </thead>
+                    <tbody>
+                      <tr><td>ARR</td><td class="num-cell">€8.2m</td><td class="num-cell">$11.4m</td></tr>
+                      <tr><td>NRR</td><td class="num-cell">140%</td><td class="num-cell">118%</td></tr>
+                      <tr><td>Gross Margin</td><td>~78% (est.)</td><td class="num-cell">82%</td></tr>
+                      <tr><td>Geography</td><td>Nordic / EU</td><td>US + Canada</td></tr>
+                      <tr><td>Ownership</td><td>Bootstrapped</td><td>PE-backed (Abacus)</td></tr>
+                      <tr><td>Product</td><td>A2A rails API</td><td>Recon + treasury</td></tr>
+                    </tbody>
+                  </table>
+                  <p>Finloop's NRR is a meaningful differentiator. Based on comparable precedent transactions, it would likely command a <strong>+1.9–2.8× premium</strong> over Meridian on NRR alone, offset partially by smaller absolute ARR and geographic concentration risk.</p>
+                </div>
+                <div class="source-chips">
+                  <span class="source-chip"><span class="source-chip-icon">⊕</span>Meridian Capital CIM (uploaded)</span>
+                  <span class="source-chip"><span class="source-chip-icon">◈</span>Nordic Payments tearsheet</span>
+                  <span class="source-chip"><span class="source-chip-icon">⊞</span>DEF14A: 12 comparable filings</span>
+                </div>
+              </div>
+            </div>
+
+          </div><!-- /chat-messages -->
+
+          <!-- Input bar -->
+          <div class="chat-input-bar">
+            <div class="chat-input-wrap">
+              <textarea class="chat-input" rows="1" placeholder="Ask anything about your corpus — multiples, patterns, companies, deals…"></textarea>
+              <button class="chat-send">↑</button>
+            </div>
+            <div class="chat-hints">
+              <span class="chat-hint">Which PE firms are most active in healthcare IT?</span>
+              <span class="chat-hint">What deal rationale repeats in Nordic exits?</span>
+              <span class="chat-hint">Show me everything I've researched this month</span>
+            </div>
+          </div>
+        </div><!-- /intel-chat -->
+      </div><!-- /intel-body -->
+    </div><!-- /page-intelligence -->
+
+
+    <!-- ============ LIBRARY PAGE ============ -->
+    <div class="page" id="page-library">
+      <div class="topbar">
+        <div class="topbar-title">Saved Tearsheets</div>
+        <div class="topbar-actions">
+          <button class="btn-amber" onclick="showPage('tearsheet')">+ New Research</button>
+        </div>
+      </div>
+
+      <div class="new-research-bar">
+        <input class="research-input" type="text" placeholder="Research any private company or sector — e.g. 'UK healthcare IT acquirers' or 'Nordic SaaS payments'">
+        <button class="btn-amber">Research →</button>
+      </div>
+
+      <div class="library-body">
+        <div class="library-filters">
+          <span class="filter-chip active">All</span>
+          <span class="filter-chip">Fintech</span>
+          <span class="filter-chip">Healthcare</span>
+          <span class="filter-chip">Industrials</span>
+          <span class="filter-chip">SaaS</span>
+          <span class="filter-sep"></span>
+          <select class="sort-select">
+            <option>Sort: Recent</option>
+            <option>Sort: Sector</option>
+            <option>Sort: Saved</option>
+          </select>
+        </div>
+
+        <div class="library-grid">
+          <div class="library-card" onclick="showPage('tearsheet')">
+            <div class="library-card-sector">Fintech · Nordic</div>
+            <div class="library-card-title">B2B SaaS payments infrastructure — Nordic acquirers</div>
+            <div class="library-card-meta">
+              <span class="library-card-date">Mar 24, 2026</span>
+              <div class="library-card-agents">
+                <span class="agent-dot"></span><span class="agent-dot"></span><span class="agent-dot"></span><span class="agent-dot"></span><span class="agent-dot"></span>
+              </div>
+            </div>
+            <div class="library-card-summary">Nordic B2B payments infrastructure; 4 ranked targets including Finloop (€8.2m ARR, 140% NRR). 5 active PE buyers identified.</div>
+            <div class="library-card-footer">
+              <span class="library-tag">€4.2B TAM</span>
+              <span class="library-tag">16.2× median</span>
+              <span class="library-card-action">Open →</span>
+            </div>
+          </div>
+
+          <div class="library-card">
+            <div class="library-card-sector">Healthcare · UK</div>
+            <div class="library-card-title">Healthcare IT — UK mid-market, clinical workflow SaaS</div>
+            <div class="library-card-meta">
+              <span class="library-card-date">Mar 23, 2026</span>
+              <div class="library-card-agents">
+                <span class="agent-dot"></span><span class="agent-dot"></span><span class="agent-dot"></span><span class="agent-dot"></span><span class="agent-dot"></span>
+              </div>
+            </div>
+            <div class="library-card-summary">Post-NHS GPIT framework analysis. 6 acquisition targets ranked; Halo Clinical and Carenote shortlisted. Vista Equity active in space.</div>
+            <div class="library-card-footer">
+              <span class="library-tag">£1.8B TAM</span>
+              <span class="library-tag">12.8× median</span>
+              <span class="library-card-action">Open →</span>
+            </div>
+          </div>
+
+          <div class="library-card">
+            <div class="library-card-sector">Fintech · Nordic</div>
+            <div class="library-card-title">Nordic fintech SaaS — Series A/B buyout targets</div>
+            <div class="library-card-meta">
+              <span class="library-card-date">Mar 22, 2026</span>
+              <div class="library-card-agents">
+                <span class="agent-dot"></span><span class="agent-dot"></span><span class="agent-dot"></span><span class="agent-dot"></span><span class="agent-dot"></span>
+              </div>
+            </div>
+            <div class="library-card-summary">Broader Nordic fintech sweep; 8 targets across lending tech, regtech, and open banking. Verdane and EQT most active buyers in period.</div>
+            <div class="library-card-footer">
+              <span class="library-tag">8 targets</span>
+              <span class="library-tag">14.4× median</span>
+              <span class="library-card-action">Open →</span>
+            </div>
+          </div>
+
+          <div class="library-card">
+            <div class="library-card-sector">Industrials · DACH</div>
+            <div class="library-card-title">German Mittelstand manufacturing software — PE roll-up</div>
+            <div class="library-card-meta">
+              <span class="library-card-date">Mar 19, 2026</span>
+              <div class="library-card-agents">
+                <span class="agent-dot"></span><span class="agent-dot"></span><span class="agent-dot"></span><span class="agent-dot"></span><span class="agent-dot" style="background:var(--text-muted)"></span>
+              </div>
+            </div>
+            <div class="library-card-summary">ERP and MES software targeting Mittelstand manufacturers. Carlyle and Triton identified as likely platform buyers; 5 add-on targets ranked.</div>
+            <div class="library-card-footer">
+              <span class="library-tag">DACH</span>
+              <span class="library-tag">10.2× median</span>
+              <span class="library-card-action">Open →</span>
+            </div>
+          </div>
+
+          <div class="library-card">
+            <div class="library-card-sector">SaaS · US</div>
+            <div class="library-card-title">US vertical SaaS — construction & field service management</div>
+            <div class="library-card-meta">
+              <span class="library-card-date">Mar 14, 2026</span>
+              <div class="library-card-agents">
+                <span class="agent-dot"></span><span class="agent-dot"></span><span class="agent-dot"></span><span class="agent-dot"></span><span class="agent-dot"></span>
+              </div>
+            </div>
+            <div class="library-card-summary">Highly fragmented market; Jonas Software and Constellation Software actively rolling up. 7 acquisition targets with ARR $2–18m identified.</div>
+            <div class="library-card-footer">
+              <span class="library-tag">7 targets</span>
+              <span class="library-tag">13.1× median</span>
+              <span class="library-card-action">Open →</span>
+            </div>
+          </div>
+
+          <div class="library-card">
+            <div class="library-card-sector">Fintech · Benelux</div>
+            <div class="library-card-title">Benelux insurtech — embedded insurance distribution platforms</div>
+            <div class="library-card-meta">
+              <span class="library-card-date">Mar 10, 2026</span>
+              <div class="library-card-agents">
+                <span class="agent-dot"></span><span class="agent-dot"></span><span class="agent-dot"></span><span class="agent-dot"></span><span class="agent-dot"></span>
+              </div>
+            </div>
+            <div class="library-card-summary">ING and Allianz X as strategic acquirers. API-native distribution layer plays commanding premium; 3 shortlisted targets below €30m ARR.</div>
+            <div class="library-card-footer">
+              <span class="library-tag">€870m TAM</span>
+              <span class="library-tag">17.8× median</span>
+              <span class="library-card-action">Open →</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div><!-- /page-library -->
+
+
+    <!-- ============ UPLOADS PAGE ============ -->
+    <div class="page" id="page-uploads">
+      <div class="topbar">
+        <div class="topbar-title">Upload Documents / <span>Build your personal corpus</span></div>
+        <div class="topbar-actions">
+          <button class="btn-ghost">Manage Corpus</button>
+        </div>
+      </div>
+
+      <div class="uploads-body">
+        <div class="uploads-main">
+          <!-- Drop zone -->
+          <div class="drop-zone">
+            <div class="drop-icon">⊕</div>
+            <div class="drop-title">Drop documents here</div>
+            <div class="drop-sub">CIMs, teasers, management presentations, deal memos,<br>lender decks, financial models</div>
+            <div class="drop-formats">
+              <span class="format-tag">PDF</span>
+              <span class="format-tag">DOCX</span>
+              <span class="format-tag">PPTX</span>
+              <span class="format-tag">XLSX</span>
+              <span class="format-tag">TXT</span>
+            </div>
+          </div>
+
+          <!-- Uploaded files -->
+          <div class="uploads-section-title">Your Documents — 2 indexed</div>
+          <div class="file-list">
+            <div class="file-row">
+              <span class="file-icon">📄</span>
+              <div class="file-info">
+                <div class="file-name">Meridian Capital — Confidential Information Memorandum.pdf</div>
+                <div class="file-meta">
+                  <span>4.2 MB</span>
+                  <span>Uploaded Mar 21, 2026</span>
+                  <span>48 pages</span>
+                </div>
+              </div>
+              <span class="file-status indexed">Indexed</span>
+            </div>
+
+            <div class="file-row">
+              <span class="file-icon">📊</span>
+              <div class="file-info">
+                <div class="file-name">Finloop Technologies — Management Presentation Q4 2025.pdf</div>
+                <div class="file-meta">
+                  <span>2.8 MB</span>
+                  <span>Uploaded Mar 22, 2026</span>
+                  <span>32 pages</span>
+                </div>
+              </div>
+              <span class="file-status indexed">Indexed</span>
+            </div>
+
+            <div class="file-row">
+              <span class="file-icon">📋</span>
+              <div class="file-info">
+                <div class="file-name">Project Ember — Process Letter and Teaser.pdf</div>
+                <div class="file-meta">
+                  <span>680 KB</span>
+                  <span>Uploaded Mar 24, 2026</span>
+                  <span>6 pages</span>
+                </div>
+              </div>
+              <span class="file-status processing">Processing…</span>
+            </div>
+          </div>
+
+          <div style="margin-top:24px;">
+            <div class="uploads-section-title">SEC EDGAR Corpus — Read only</div>
+            <div class="file-list">
+              <div class="file-row" style="opacity:0.7;cursor:default;">
+                <span class="file-icon">⊞</span>
+                <div class="file-info">
+                  <div class="file-name">DEF14A Merger Proxy Filings — Full corpus</div>
+                  <div class="file-meta">
+                    <span>3,241 transactions</span>
+                    <span>2000–2026</span>
+                    <span>bge-base-en embeddings</span>
+                  </div>
+                </div>
+                <span class="file-status indexed">Indexed</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Right panel -->
+        <div class="uploads-sidebar">
+          <div class="uploads-panel">
+            <div class="uploads-panel-title">Corpus Overview</div>
+            <div class="corpus-stat">
+              <span class="corpus-stat-label">DEF14A filings</span>
+              <span class="corpus-stat-val">3,241</span>
+            </div>
+            <div class="corpus-stat">
+              <span class="corpus-stat-label">Your tearsheets</span>
+              <span class="corpus-stat-val">6</span>
+            </div>
+            <div class="corpus-stat">
+              <span class="corpus-stat-label">Uploaded docs</span>
+              <span class="corpus-stat-val">2 indexed</span>
+            </div>
+            <div class="corpus-stat">
+              <span class="corpus-stat-label">Total vectors</span>
+              <span class="corpus-stat-val">184,220</span>
+            </div>
+            <div style="margin-top:14px;margin-bottom:6px;">
+              <div style="font-family:var(--mono);font-size:9px;color:var(--text-dim);margin-bottom:6px;">Storage used</div>
+              <div class="corpus-bar-wrap">
+                <div class="corpus-bar-fill" style="width:23%"></div>
+              </div>
+              <div style="font-family:var(--mono);font-size:9px;color:var(--text-dim);">230 MB of 1 GB</div>
+            </div>
+          </div>
+
+          <div class="uploads-panel">
+            <div class="uploads-panel-title">What to upload</div>
+            <div style="font-family:var(--body);font-size:12px;color:var(--text-dim);line-height:1.6;">
+              <p style="margin-bottom:10px;">Intelligence mode searches everything you upload. The more context you add, the sharper the answers.</p>
+              <p style="margin-bottom:8px;font-family:var(--mono);font-size:10px;color:var(--text);">Works well:</p>
+              <div style="display:flex;flex-direction:column;gap:5px;margin-bottom:12px;">
+                <span style="font-family:var(--mono);font-size:10px;color:var(--text-dim);">— CIMs and information memos</span>
+                <span style="font-family:var(--mono);font-size:10px;color:var(--text-dim);">— Management presentations</span>
+                <span style="font-family:var(--mono);font-size:10px;color:var(--text-dim);">— Lender and investor decks</span>
+                <span style="font-family:var(--mono);font-size:10px;color:var(--text-dim);">— Your own deal memos</span>
+                <span style="font-family:var(--mono);font-size:10px;color:var(--text-dim);">— Sector research reports</span>
+              </div>
+              <p style="font-family:var(--mono);font-size:9px;color:var(--text-muted);">All documents are encrypted at rest and never used for model training.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div><!-- /page-uploads -->
+
+  </main>
+</div>
+
+<script>
+function showPage(id) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  document.getElementById('page-' + id).classList.add('active');
+  const map = { tearsheet: 0, intelligence: 1, library: 2, uploads: 3 };
+  const items = document.querySelectorAll('.sidebar .nav-item');
+  if (items[map[id]]) items[map[id]].classList.add('active');
+}
+
+function scrollToSection(id) {
+  const el = document.getElementById('section-' + id);
+  if (el) {
+    el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    document.querySelectorAll('.agent-item').forEach(i => i.classList.remove('active'));
+    const idx = ['overview','ma','targets','risks','buyers'].indexOf(id);
+    const items = document.querySelectorAll('.agent-item');
+    if (items[idx]) items[idx].classList.add('active');
+  }
+}
+
+// Auto-resize textarea
+const ta = document.querySelector('.chat-input');
+if (ta) {
+  ta.addEventListener('input', function() {
+    this.style.height = 'auto';
+    this.style.height = Math.min(this.scrollHeight, 100) + 'px';
+  });
+}
+</script>
+</body>
+</html>

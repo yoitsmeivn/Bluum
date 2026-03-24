@@ -121,6 +121,59 @@ tearsheets      — id, research_id, user_id, title, saved_at
 
 ---
 
+## Setup
+
+### Prerequisites
+
+- Node.js 18+
+- npm 9+
+- A Supabase project (free tier works)
+- An Anthropic API key
+- ChromaDB running locally (optional, for Intelligence mode)
+
+### 1. Clone and install
+
+```bash
+git clone <your-repo-url> bluum
+cd bluum
+npm install
+```
+
+### 2. Environment variables
+
+```bash
+cp .env.example .env
+```
+
+Fill in your `.env`:
+
+| Variable | Where to get it |
+|---|---|
+| `ANTHROPIC_API_KEY` | [console.anthropic.com](https://console.anthropic.com) |
+| `SUPABASE_URL` | Supabase project → Settings → API |
+| `SUPABASE_ANON_KEY` | Supabase project → Settings → API (anon/public) |
+| `SUPABASE_SERVICE_ROLE_KEY` | Supabase project → Settings → API (service_role) |
+
+### 3. Set up the database
+
+Open the Supabase SQL Editor and run the contents of `supabase/schema.sql`. This creates all tables, indexes, RLS policies, and the auth trigger.
+
+### 4. Run the app
+
+```bash
+npm run dev
+```
+
+This starts both the frontend (port 5173) and backend (port 3001) concurrently.
+
+### 5. (Optional) ChromaDB for Intelligence mode
+
+```bash
+docker run -p 8000:8000 chromadb/chroma
+```
+
+---
+
 ## Ethical Commitments
 
 Bluum is built for people who have historically been locked out of private market intelligence. We take that responsibility seriously.
